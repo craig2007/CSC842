@@ -24,4 +24,4 @@ classifiers = [
 ]
 
 [project.urls]
-Repository = "https://github.com/craig2007/CSC842"
+Repository = "https://github.com/craig2007/CSC842/tree/main/project1"
