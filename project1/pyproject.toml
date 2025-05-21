@@ -6,9 +6,8 @@ build-backend = "hatchling.build"
 name = "android-analyzer"
 version = "1.0.0"
 dependencies = [
+    "psutil",
     "pure-python-adb",
-    "pandas",
-    "Dash",
 ]
 requires-python = ">= 3.6"
 authors = [
