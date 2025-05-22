@@ -1,6 +1,6 @@
 # android-analyzer
 
-android-analyzer is a Python library to help with viewing processes and packageson an Android device to help with identifying packages that are using more data than they should or are displaying unusual or suspicious behavior.
+android-analyzer is a Python library to help with viewing processes and packages on an Android device to help with identifying packages that are using more data than they should or are displaying unusual or suspicious behavior.
 
 ## Installation
 
@@ -15,4 +15,8 @@ android-analyzer requires Python 3.6+, along with the following libraries:
 
 ## Running android-analyzer
 
-To run android-analyzer, you can use `python -m android_analyzer`
+To run android-analyzer, you can use `python -m android_analyzer`. android-analyzer has no required arguments, but it does include optional arguments listed below.
+
+    -d, --device DEVICE    The serial number of the Android device to be analyzed
+    -h, --help             Display the help menu for android-analyzer
+    -o, --output OUTPUT    File to output results to
