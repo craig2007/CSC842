@@ -21,6 +21,7 @@ async def main():
     adb = None
     device = None
 
+    # Parse command-line arguments
     parser = argparse.ArgumentParser(
         prog="android_analyer",
         description="android-analyzer is a Python library to help with viewing processes and packages on an Android device to help with identifying packages that are using more data than they should or are displaying unusual or suspicious behavior.",
@@ -97,6 +98,7 @@ async def main():
                 f.write(pkg.to_csv())
 
     if "processes" in args.analyzers:
+        # Get running processes from the device
         processes = await get_running_processes(device)
         proc_list = processes.split("\n")
         with open(f"{args.outdir}/processes.csv", "w") as f:
