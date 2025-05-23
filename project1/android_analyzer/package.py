@@ -1,4 +1,4 @@
-class PackageData():
+class PackageData:
     pkg = None
     uid = None
     data_tx = None

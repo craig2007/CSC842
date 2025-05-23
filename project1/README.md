@@ -27,6 +27,6 @@ To run android-analyzer, you can use `python -m android_analyzer`. android-analy
 
 This is an initial version of the tool, which can be further built up. Included are some ideas for further development of the tool:
 
-    1. Add an interactive dashboard: This could help to improve visualization and cause anomalies in the data to better stand out. Further, it could help to enable the ability to point and click on an anomalous entry to enable follow-on analysis of a specific package.
-    1. Follow-on analytics for individual packages: If anomalous behavior is seen with a specific process or package, follow-on analytics could be used to further investigate the suspicious process/package. This could include things like looking for associated logcat logs or analyzing package manifests.
-    1. Looking into the possibility of having the tool interact with APK decompiler tools.
+    * Add an interactive dashboard: This could help to improve visualization and cause anomalies in the data to better stand out. Further, it could help to enable the ability to point and click on an anomalous entry to enable follow-on analysis of a specific package.
+    * Follow-on analytics for individual packages: If anomalous behavior is seen with a specific process or package, follow-on analytics could be used to further investigate the suspicious process/package. This could include things like looking for associated logcat logs or analyzing package manifests.
+    * Looking into the possibility of having the tool interact with APK decompiler tools.
