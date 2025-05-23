@@ -18,6 +18,8 @@ android-analyzer requires Python 3.6+, along with the following libraries:
     * psutil
     * pure-python-adb
 
+Additionally, in order to use android-analyzer, you need to have ADB installed on your computer and you need developer mode and debugging enabled on the Android device being analyzed.
+
 ## Running android-analyzer
 
 To run android-analyzer, you can use `python -m android_analyzer`. android-analyzer has no required arguments, but it does include optional arguments listed below.
