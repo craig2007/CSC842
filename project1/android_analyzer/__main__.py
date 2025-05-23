@@ -1,14 +1,18 @@
 import argparse
 import asyncio
+import os
 import psutil
 import subprocess
 import time
 
-from .adb_utils import get_net_data, get_packages, get_pkg_uid
+from .adb_utils import get_net_data, get_packages, get_pkg_uid, get_running_processes
 from .package import PackageData
 from ppadb.client_async import ClientAsync as AdbClient
 
 MAX_WAIT_TIME = 10
+
+def list_of_strings(arg):
+    return arg.split(",")
 
 async def main():
     adb = None
@@ -19,7 +23,8 @@ async def main():
          description="android-analyzer is a Python library to help with viewing processes and packages on an Android device to help with identifying packages that are using more data than they should or are displaying unusual or suspicious behavior.",
     )
     parser.add_argument("-d", "--device", help="The serial number of the Android device to be analyzed", default=None)
-    parser.add_argument("-o", "--output", help="File to output results to")
+    parser.add_argument("-o", "--outdir", help="Directory to output results to", default=f"{os.getcwd()}/out")
+    parser.add_argument("-a", "--analyzers", type=list_of_strings, default=["appnetstats", "processes"], help="A comma delimited list of which analytics to run. Current values: appnetstats, processes")
     args = parser.parse_args()
 
     # Start ADB if it is not running
@@ -55,26 +60,39 @@ async def main():
         raise Exception("No device selected")
     print(f"Selected {device.serial}")
     
-    # Get a list of installed packages
-    print("Getting packages")
-    pkg_list = await get_packages(device)
+    if "appnetstats" in args.analyzers:
+        # Get a list of installed packages
+        print("Getting packages")
+        pkg_list = await get_packages(device)
 
-    # Get UIDs associated with each package
-    print("Getting UIDs")
-    tasks = [get_pkg_uid(device, pkg) for pkg in pkg_list]
-    results = await asyncio.gather(*tasks)
-    for result in results:
-        print(f"Package: {result.pkg}, UID: {result.uid}")
+        # Get UIDs associated with each package
+        print("Getting UIDs")
+        tasks = [get_pkg_uid(device, pkg) for pkg in pkg_list]
+        results = await asyncio.gather(*tasks)
+        for result in results:
+            print(f"Package: {result.pkg}, UID: {result.uid}")
 
-    # Get network data usage
-    netstat_list = await get_net_data(device)
-    for netstat_data in netstat_list:
-        for pkg in pkg_list:
-            if len(netstat_data) == 5 and netstat_data[0] == pkg.uid:
-                pkg.data_rx = netstat_data[1]
-                pkg.data_tx = netstat_data[3]
-    for pkg in pkg_list:
-        pkg.print()
+        # Get network data usage
+        netstat_list = await get_net_data(device)
+        for netstat_data in netstat_list:
+            for pkg in pkg_list:
+                if len(netstat_data) == 5 and netstat_data[0] == pkg.uid:
+                    pkg.data_rx = netstat_data[1]
+                    pkg.data_tx = netstat_data[3]
+
+        # Output results to a file in the output directory
+        os.makedirs(args.outdir, exist_ok=True)
+        with open(f"{args.outdir}/app_netstats.csv", "w") as f:
+            f.write("UID,Package,Transmitted Data,Received Data\n")
+            for pkg in pkg_list:
+                f.write(pkg.to_csv())
+
+    if "processes" in args.analyzers:
+        processes = await get_running_processes(device)
+        proc_list = processes.split("\n")
+        with open(f"{args.outdir}/processes.csv", "w") as f:
+            for proc in proc_list:
+                f.write(f"{','.join(proc.split())}\n")
 
     # Close ADB if it was started
     if adb != None:

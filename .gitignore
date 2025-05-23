@@ -1,1 +1,3 @@
 *.bk
+*/out/
+*/__pycache__/
