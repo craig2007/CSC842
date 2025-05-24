@@ -3,11 +3,13 @@ import asyncio
 import os
 import subprocess
 import time
+from pathlib import PurePath, PurePosixPath
 
 import psutil
 from ppadb.client_async import ClientAsync as AdbClient
 
-from .adb_utils import get_net_data, get_packages, get_pkg_uid, get_running_processes
+from .adb_utils import (get_net_data, get_packages, get_pkg_uid,
+                        get_running_processes)
 from .package import PackageData
 
 MAX_WAIT_TIME = 10
@@ -15,6 +17,10 @@ MAX_WAIT_TIME = 10
 
 def list_of_strings(arg):
     return arg.split(",")
+
+
+def path_type(arg):
+    return PurePath(arg)
 
 
 async def main():
@@ -26,8 +32,10 @@ async def main():
         prog="android_analyer",
         description="android-analyzer is a Python library to help with viewing processes and packages on an Android device to help with identifying packages that are using more data than they should or are displaying unusual or suspicious behavior.",
     )
-    parser.add_argument("-d", "--device", help="The serial number of the Android device to be analyzed", default=None)
-    parser.add_argument("-o", "--outdir", help="Directory to output results to", default=f"{os.getcwd()}/out")
+    parser.add_argument("-d", "--device", default=None, help="The serial number of the Android device to be analyzed")
+    parser.add_argument(
+        "-o", "--outdir", type=path_type, default=PurePath(os.getcwd(), "out"), help="Directory to output results to"
+    )
     parser.add_argument(
         "-a",
         "--analyzers",
@@ -91,8 +99,12 @@ async def main():
                     pkg.data_tx = netstat_data[3]
 
         # Output results to a file in the output directory
-        os.makedirs(args.outdir, exist_ok=True)
-        with open(f"{args.outdir}/app_netstats.csv", "w") as f:
+        if isinstance(args.outdir, PurePosixPath):
+            path_str = args.outdir.as_posix() + "/"
+        else:
+            path_str = str(args.outdir) + "\\"
+        os.makedirs(path_str, exist_ok=True)
+        with open(f"{path_str}app_netstats.csv", "w") as f:
             f.write("UID,Package,Transmitted Data,Received Data\n")
             for pkg in pkg_list:
                 f.write(pkg.to_csv())
