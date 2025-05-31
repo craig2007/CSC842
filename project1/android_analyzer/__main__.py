@@ -1,27 +1,18 @@
 import argparse
 import asyncio
 import os
-import subprocess
-import time
 from pathlib import PurePath, PurePosixPath
 
-import psutil
+from android_analyzer_common import path_type, select_device, start_adb
 from ppadb.client_async import ClientAsync as AdbClient
 
 from .adb_utils import (get_net_data, get_packages, get_pkg_uid,
                         get_running_processes)
 from .package import PackageData
 
-MAX_WAIT_TIME = 10
-
 
 def list_of_strings(arg):
     return arg.split(",")
-
-
-def path_type(arg):
-    return PurePath(arg)
-
 
 async def main():
     adb = None
@@ -45,38 +36,12 @@ async def main():
     )
     args = parser.parse_args()
 
-    # Start ADB if it is not running
-    if "adb" not in (p.name() for p in psutil.process_iter()):
-        print("Starting ADB")
-        adb = subprocess.Popen(["adb", "start-server"])
-    i = 0
-    for i in range(0, MAX_WAIT_TIME):
-        time.sleep(1)
-        if "adb" in (p.name() for p in psutil.process_iter()):
-            break
-    if i == MAX_WAIT_TIME:
-        print("ERROR: ADB failed to start")
-        raise Exception("ADB failed to start")
+    start_adb()
 
     # Connect to the ADB server
     client = AdbClient(host="127.0.0.1", port=5037)
 
-    # Select the device analyze
-    device = await client.device(args.device)
-    if device == None:
-        devices = await client.devices()
-        print("Select from the following devices:")
-        for i in range(0, len(devices)):
-            print(f"\t{i}) {devices[i].serial}")
-        try:
-            selection = int(input("Selection: "))
-            device = devices[selection]
-        except:
-            print("Invalid selection")
-    if device == None:
-        print("ERROR: No device selected")
-        raise Exception("No device selected")
-    print(f"Selected {device.serial}")
+    device = await select_device(client, args.device)
 
     if "appnetstats" in args.analyzers:
         # Get a list of installed packages

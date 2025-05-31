@@ -3,17 +3,17 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "android-analyzer"
-version = "1.0.1"
+name = "android-analyzer-common"
+version = "1.0.0"
 dependencies = [
-    "android-analyzer-common",
+    "psutil",
     "pure-python-adb",
 ]
 requires-python = ">= 3.6"
 authors = [
     {name = "Craig Tieman", email = "craig.tieman2007@gmail.com"}
 ]
-description = "Tool to help analyze packages and processes being run on an Android device"
+description = "android-analyzer-common is not meant to be a standalone package. It is designed to be a Python wheel containing common code used across different tools in the android-analyzer toolset."
 readme = "README.md"
 license = "GPL-3.0-or-later"
 keywords = ["adb", "android"]
@@ -23,4 +23,4 @@ classifiers = [
 ]
 
 [project.urls]
-Repository = "https://github.com/craig2007/CSC842/tree/main/project1"
+Repository = "https://github.com/craig2007/CSC842/tree/main/common"
