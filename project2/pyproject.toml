@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "android-package-analyzer"
+version = "1.0.0"
+dependencies = [
+    "android-analyzer-common",
+    "pure-python-adb",
+]
+requires-python = ">= 3.6"
+authors = [
+    {name = "Craig Tieman", email = "craig.tieman2007@gmail.com"}
+]
+description = "A follow-up tool to android-analyzer. After triaging packages that need further investigation with android-analyzer, this tool is designed to help begin analysis of a specific package."
+readme = "README.md"
+license = "GPL-3.0-or-later"
+keywords = ["adb", "android"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3.6",
+]
+
+[project.urls]
+Repository = "https://github.com/craig2007/CSC842/tree/main/project2"
