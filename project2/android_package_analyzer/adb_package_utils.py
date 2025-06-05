@@ -83,4 +83,5 @@ class AdbPackage:
             print(f"    {perm}")
 
     async def pull_pkg(self, out_file="out.apk"):
-        return await self.device.pull(self.path, out_file)
+        await self.device.pull(self.path, out_file)
+        return out_file
