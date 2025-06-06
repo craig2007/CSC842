@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import datetime
 import hashlib
+import json
 import os
 import time
 from pathlib import PurePath, PurePosixPath
@@ -32,7 +33,18 @@ def vt_scan(key_file, apk_file):
     headers = {"accept": "application/json", "x-apikey": apikey}
 
     response = requests.get(url, headers=headers)
-    print(response.text)
+    json_val = json.loads(response.text)
+    try:
+        malware_class = json_val["data"]["attributes"]["sandbox_verdicts"]["Zenbox android"]
+        risk_indicator = json_val["data"]["attributes"]["androguard"]["RiskIndicator"]
+        print("Malware Classification:")
+        print(f"  {malware_class}")
+        print("Risk Indicator")
+        print(f"  {risk_indicator}")
+    except:
+        pass
+
+    return response.text
 
 
 async def main():
@@ -86,7 +98,9 @@ async def main():
         if args.key_file == None:
             print("ERROR: An API key needs to be provided to send to VirusTotal")
         else:
-            vt_scan(args.key_file, apk_file)
+            vt_results = vt_scan(args.key_file, apk_file)
+            with open(f"{path_str}{args.package_name}_vt_scan.json", "w") as f:
+                f.write(vt_results)
 
 
 if __name__ == "__main__":
