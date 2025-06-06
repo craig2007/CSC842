@@ -1,8 +1,10 @@
 import argparse
 import asyncio
+import datetime
 import hashlib
 import os
-from pathlib import PurePath
+import time
+from pathlib import PurePath, PurePosixPath
 
 import requests
 from android_analyzer_common import path_type, select_device, start_adb
@@ -20,6 +22,17 @@ def sha256_of_apk(apk_file):
         return sha256hash.hexdigest()
     except:
         return None
+
+
+def vt_scan(key_file, apk_file):
+    with open(key_file, "r") as f:
+        apikey = f.read().strip()
+    apk_hash = sha256_of_apk(apk_file)
+    url = f"https://www.virustotal.com/api/v3/files/{apk_hash}"
+    headers = {"accept": "application/json", "x-apikey": apikey}
+
+    response = requests.get(url, headers=headers)
+    print(response.text)
 
 
 async def main():
@@ -47,24 +60,33 @@ async def main():
 
     device = await select_device(client, args.device)
 
+    # Create output directory for results
+    if isinstance(args.outdir, PurePosixPath):
+        path_str = args.outdir.as_posix() + "/"
+    else:
+        path_str = str(args.outdir) + "\\"
+    os.makedirs(path_str, exist_ok=True)
+
     # Get information about the package from dumpsys
     pkg = AdbPackage(args.package_name, device)
     await pkg.parse_pkg_info()
+    pkg.output_pkg_info(f"{path_str}{args.package_name}_info.txt")
     pkg.print_pkg_info()
-    apk_file = await pkg.pull_pkg()
+    apk_file = await pkg.pull_pkg(f"{path_str}{args.package_name}.apk")
 
+    # Get Logcat logs
+    t = time.time() - (24 * 60 * 60)
+    t_str = str(datetime.datetime.fromtimestamp(t))
+    log_data = await device.shell(f'logcat -t "{t_str}"')
+    with open(f"{path_str}{device.serial}_logcat.log", "w") as f:
+        f.write(log_data)
+
+    # Check VirusTotal results for the package
     if args.scan:
         if args.key_file == None:
             print("ERROR: An API key needs to be provided to send to VirusTotal")
         else:
-            with open(args.key_file, "r") as f:
-                apikey = f.read().strip()
-            apk_hash = sha256_of_apk(apk_file)
-            url = f"https://www.virustotal.com/api/v3/files/{apk_hash}"
-            headers = {"accept": "application/json", "x-apikey": apikey}
-
-            response = requests.get(url, headers=headers)
-            print(response.text)
+            vt_scan(args.key_file, apk_file)
 
 
 if __name__ == "__main__":

@@ -67,6 +67,22 @@ class AdbPackage:
         self.parse_permissions(dumpsys_result)
         self.parse_main_activity(dumpsys_result)
 
+    def output_pkg_info(self, out_file):
+        with open(out_file, "w") as f:
+            f.write(f"Package: {self.pkg_name}\n")
+            f.write(f"APK path: {self.path}\n")
+            f.write(f"Main activity: {self.main_activity}\n")
+            f.write("Permissions:\n")
+            f.write("  Declared:\n")
+            for perm in self.declared_perms:
+                f.write(f"    {perm}\n")
+            f.write("  Requested:\n")
+            for perm in self.req_perms:
+                f.write(f"    {perm}\n")
+            f.write("  Install:\n")
+            for perm in self.install_perms:
+                f.write(f"    {perm}\n")
+
     def print_pkg_info(self):
         print(f"Package: {self.pkg_name}")
         print(f"APK path: {self.path}")
