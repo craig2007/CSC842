@@ -33,5 +33,6 @@ This is an initial version of the tool, which can be further built up. Included 
 
     * Ensure the tool works with the formatting of ADB results for different versions of Android.
     * Integrate with an interactive dashboard: The interactive dashboard would leverage both this Python project, along with android-analyzer. The idea for that would be that the interactive dashboard would initially depict the results of android-analyzer, and the user would be able to use the dashboard to click on a package of interest, at which point the dashboard could use android-package-analyzer to begin providing information on that package.
+    * Adding in automated analysis of logcat logs extracted from the device to parse out logs specifically associated with the package being analyzed.
     * Looking into the possibility of having the tool interact with APK decompiler tools.
     * Having the tool transfer the suspicious package to a testing environment where the package can be safely run with a packet sniffer running to begin dynamic analysis of the suspicious package.
