@@ -11,7 +11,9 @@ android-package-analyzer is written to be built as a Python wheel, which can be 
 android-package-analyzer requires Python 3.6+, along with the following libraries:
 
     * hatchling
+    * android-analyzer-common
     * pure-python-adb
+    * requests
 
 Additionally, in order to use android-package-analyzer, you need to have ADB installed on your computer and you need developer mode and debugging enabled on the Android device being analyzed.
 
@@ -19,9 +21,11 @@ Additionally, in order to use android-package-analyzer, you need to have ADB ins
 
 To run android-package-analyzer, you can use `python -m android_package_analyzer [package_name]`. Along with the required `package_name` argument, android-package-analyzer has the below optional arguments:
 
-    -d, --device DEVICE          The serial number of the Android device to be analyzed
-    -h, --help                   Display the help menu for android-package-analyzer
-    -o, --outdir OUTPUT          Directory to output results to
+    -d, --device DEVICE          The serial number of the Android device to be analyzed.
+    -h, --help                   Display the help menu for android-package-analyzer.
+    -k, --key-file               The path to a file containing a VirusTotal API key. Required when -s flag is used.
+    -o, --outdir OUTPUT          Directory to output results to.
+    -s, --scan                   A flag to have the tool submit the package to VirusTotal to be scanned for malware. The -k argument must be included when this argument is used.
 
 ## Future Work
 
@@ -30,3 +34,4 @@ This is an initial version of the tool, which can be further built up. Included 
     * Ensure the tool works with the formatting of ADB results for different versions of Android.
     * Integrate with an interactive dashboard: The interactive dashboard would leverage both this Python project, along with android-analyzer. The idea for that would be that the interactive dashboard would initially depict the results of android-analyzer, and the user would be able to use the dashboard to click on a package of interest, at which point the dashboard could use android-package-analyzer to begin providing information on that package.
     * Looking into the possibility of having the tool interact with APK decompiler tools.
+    * Having the tool transfer the suspicious package to a testing environment where the package can be safely run with a packet sniffer running to begin dynamic analysis of the suspicious package.

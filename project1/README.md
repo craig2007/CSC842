@@ -15,7 +15,7 @@ android-analyzer is written to be built as a Python wheel, which can be installe
 android-analyzer requires Python 3.6+, along with the following libraries:
 
     * hatchling
-    * psutil
+    * android-analyzer-common
     * pure-python-adb
 
 Additionally, in order to use android-analyzer, you need to have ADB installed on your computer and you need developer mode and debugging enabled on the Android device being analyzed.
