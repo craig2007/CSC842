@@ -14,6 +14,7 @@ from .utils import get_app_net_stats
 def list_of_strings(arg):
     return arg.split(",")
 
+
 async def main():
     adb = None
     device = None

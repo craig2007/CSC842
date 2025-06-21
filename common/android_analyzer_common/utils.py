@@ -8,8 +8,10 @@ from ppadb.client_async import ClientAsync as AdbClient
 
 MAX_WAIT_TIME = 10
 
+
 def path_type(arg):
     return PurePath(arg)
+
 
 # Function to start the ADB daemon if it is not currently running
 def start_adb():
@@ -25,7 +27,8 @@ def start_adb():
         print("ERROR: ADB failed to start")
         raise Exception("ADB failed to start")
 
-async def select_device(client: AdbClient=None, device: str = None):
+
+async def select_device(client: AdbClient = None, device: str = None):
     if client == None:
         print("ERROR: ADB client cannot be None")
         raise Exception("ADB client cannot be None")

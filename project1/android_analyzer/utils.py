@@ -1,8 +1,9 @@
 import asyncio
-from pathlib import PurePath, PurePosixPath
 import os
+from pathlib import PurePath, PurePosixPath
 
-from .adb_utils import (get_net_data, get_packages, get_pkg_uid)
+from .adb_utils import get_net_data, get_packages, get_pkg_uid
+
 
 async def get_app_net_stats(device, outdir=PurePath(os.getcwd(), "out")):
     pkg_list = await get_packages(device)
