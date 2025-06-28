@@ -8,7 +8,7 @@ import time
 from pathlib import PurePath, PurePosixPath
 
 import requests
-from android_analyzer_common import path_type, select_device, start_adb
+from android_analyzer_common import get_logcat_logs, path_type, select_device, start_adb
 from ppadb.client_async import ClientAsync as AdbClient
 
 from .adb_package_utils import AdbPackage
@@ -87,9 +87,7 @@ async def main():
     apk_file = await pkg.pull_pkg(f"{path_str}{args.package_name}.apk")
 
     # Get Logcat logs
-    t = time.time() - (24 * 60 * 60)
-    t_str = str(datetime.datetime.fromtimestamp(t))
-    log_data = await device.shell(f'logcat -t "{t_str}"')
+    log_data = await get_logcat_logs(device)
     with open(f"{path_str}{device.serial}_logcat.log", "w") as f:
         f.write(log_data)
 

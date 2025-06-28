@@ -1,10 +1,12 @@
 import asyncio
+import datetime
 import subprocess
 import time
 from pathlib import PurePath
 
 import psutil
 from ppadb.client_async import ClientAsync as AdbClient
+from ppadb.device_async import DeviceAsync as AdbDevice
 
 MAX_WAIT_TIME = 10
 
@@ -48,3 +50,9 @@ async def select_device(client: AdbClient = None, device: str = None):
         raise Exception("No device selected")
     print(f"Selected {device.serial}")
     return device
+
+async def get_logcat_logs(device: AdbDevice):
+    t = time.time() - (24 * 60 * 60)
+    t_str = str(datetime.datetime.fromtimestamp(t))
+    log_data = await device.shell(f'logcat -t "{t_str}"')
+    return log_data
