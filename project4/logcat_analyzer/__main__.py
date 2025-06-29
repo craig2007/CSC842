@@ -13,11 +13,11 @@ import requests
 # Constants for ollama
 OLLAMA_SERVICE = "/etc/systemd/system/ollama.service"
 OLLAMA_API_ENDPOINT = "http://localhost:11434/api/generate"
-OLLAMA_MODEL = "llama3.1:8b"
-OLLAMA_TIMEOUT = 220
+OLLAMA_MODEL = "llama3.2"
+OLLAMA_TIMEOUT = 600
 LOGCAT_LOG_ANALYSIS_PROMPT = "You are an expert cyber-security analyst with a familiarity of Android logcat logs. Your task is to examine each line in the provided log data and assign a score from 1 to 10 as to how critical the log entry. Return ONLY valid JSON with EXACTLY the following fields and format\n\n"
 "{\n"
-'  "PID": number - the process ID that caused the log entry,\n"'
+'  "process": "string - the name of the process that caused the log entry",\n"'
 '  "log_entry": "string - the log entry",\n'
 '  "summary": "string - a summary describing what the log entry means",\n'
 '  "score": number - the score indicating how critical the log entry is,\n'
@@ -42,8 +42,10 @@ def start_ollama():
 
 def analyze_logcat_logs_with_ollama(log_data):
     try:
+        headers = {"Content-Type": "application/json"}
         response = requests.post(
-            OLLAMA_API_ENDPOINT,
+            url=OLLAMA_API_ENDPOINT,
+            headers=headers,
             json={
                 "model": OLLAMA_MODEL,
                 "prompt": f"{LOGCAT_LOG_ANALYSIS_PROMPT}\n\n{log_data}",
@@ -85,7 +87,9 @@ async def main():
     client = AdbClient(host="127.0.0.1", port=5037)
     device = await select_device(client, args.device)
 
+    print("Retrieving logcat logs...")
     log_data = await get_logcat_logs(device)
+    print("Sending logs to ollama...")
     analyzed_log_data = analyze_logcat_logs_with_ollama(log_data)
     print(analyzed_log_data)
 
