@@ -15,14 +15,18 @@ OLLAMA_SERVICE = "/etc/systemd/system/ollama.service"
 OLLAMA_API_ENDPOINT = "http://localhost:11434/api/generate"
 OLLAMA_MODEL = "llama3.2"
 OLLAMA_TIMEOUT = 600
-LOGCAT_LOG_ANALYSIS_PROMPT = "You are an expert cyber-security analyst with a familiarity of Android logcat logs. Your task is to examine each line in the provided log data and assign a score from 1 to 10 as to how critical the log entry. Return ONLY valid JSON with EXACTLY the following fields and format\n\n"
-"{\n"
-'  "process": "string - the name of the process that caused the log entry",\n"'
-'  "log_entry": "string - the log entry",\n'
-'  "summary": "string - a summary describing what the log entry means",\n'
-'  "score": number - the score indicating how critical the log entry is,\n'
-'  "reason": "string - the reason that the log entry was assigned the score that it was given"\n'
-"}\n\n"
+LOGCAT_LOG_ANALYSIS_PROMPT = """You are an expert cyber-security analyst with a familiarity of Android logcat logs. Your task is to examine each line in the provided log data and assign a score from 1 to 10 as to how critical the log entry. Return ONLY valid JSON with EXACTLY the following fields and format\n\n
+{
+  "log_entries": [
+    {
+      "process": "string - the name of the process that caused the log entry",
+      "log_entry": "string - the log entry",
+      "summary": "string - a summary describing what the log entry means",
+      "score": number - a score in the range of 1 to 10 indicating how critical the log entry is with 1 being not important and 10 being extremely critical,
+      "reason": "string - a description of the reason that the log entry was assigned the score that it was given"
+    }
+  ]
+}\n\n"""
 
 
 def start_ollama():
