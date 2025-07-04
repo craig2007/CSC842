@@ -5,10 +5,11 @@ import sys
 import time
 from pathlib import PurePath, PurePosixPath
 
-from android_analyzer_common import get_logcat_logs, select_device, start_adb, MAX_WAIT_TIME, path_type
-from ppadb.client_async import ClientAsync as AdbClient
 import psutil
 import requests
+from android_analyzer_common import (MAX_WAIT_TIME, get_logcat_logs, path_type,
+                                     select_device, start_adb)
+from ppadb.client_async import ClientAsync as AdbClient
 
 # Constants for ollama
 OLLAMA_SERVICE = "/etc/systemd/system/ollama.service"
@@ -44,6 +45,7 @@ def start_ollama():
         print("ERROR: ollama failed to start")
         raise Exception("ollama failed to start")
 
+
 def analyze_logcat_logs_with_ollama(log_data):
     try:
         headers = {"Content-Type": "application/json"}
@@ -69,6 +71,7 @@ def analyze_logcat_logs_with_ollama(log_data):
         print(f"Ollama failed to provide analyzed results with error {repr(e)}")
         return None
 
+
 async def main():
     parser = argparse.ArgumentParser(
         prog="logcat_analyzer",
@@ -76,7 +79,11 @@ async def main():
     )
     parser.add_argument("-d", "--device", default=None, help="The serial number of the Android device to be analyzed")
     parser.add_argument(
-        "-o", "--out", type=path_type, default=PurePath(os.getcwd(), "logcat_analysis.json"), help="JSON file to output results to"
+        "-o",
+        "--out",
+        type=path_type,
+        default=PurePath(os.getcwd(), "logcat_analysis.json"),
+        help="JSON file to output results to",
     )
     args = parser.parse_args()
 
@@ -99,6 +106,7 @@ async def main():
         with open(args.out, "w") as f:
             f.write(analyzed_log_data)
     print(analyzed_log_data)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

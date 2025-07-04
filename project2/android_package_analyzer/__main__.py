@@ -8,7 +8,8 @@ import time
 from pathlib import PurePath, PurePosixPath
 
 import requests
-from android_analyzer_common import get_logcat_logs, path_type, select_device, start_adb
+from android_analyzer_common import (get_logcat_logs, path_type, select_device,
+                                     start_adb)
 from ppadb.client_async import ClientAsync as AdbClient
 
 from .adb_package_utils import AdbPackage

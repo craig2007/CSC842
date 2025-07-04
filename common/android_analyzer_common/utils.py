@@ -51,7 +51,8 @@ async def select_device(client: AdbClient = None, device: str = None):
     print(f"Selected {device.serial}")
     return device
 
-async def get_logcat_logs(device: AdbDevice, num_hours: int=24):
+
+async def get_logcat_logs(device: AdbDevice, num_hours: int = 24):
     t = time.time() - (num_hours * 60 * 60)
     t_str = str(datetime.datetime.fromtimestamp(t))
     log_data = await device.shell(f'logcat -t "{t_str}"')
