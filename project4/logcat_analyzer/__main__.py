@@ -76,7 +76,7 @@ async def main():
     )
     parser.add_argument("-d", "--device", default=None, help="The serial number of the Android device to be analyzed")
     parser.add_argument(
-        "-o", "--outdir", type=path_type, default=PurePath(os.getcwd(), "out"), help="Directory to output results to"
+        "-o", "--out", type=path_type, default=PurePath(os.getcwd(), "logcat_analysis.json"), help="JSON file to output results to"
     )
     args = parser.parse_args()
 
@@ -95,6 +95,9 @@ async def main():
     log_data = await get_logcat_logs(device)
     print("Sending logs to ollama...")
     analyzed_log_data = analyze_logcat_logs_with_ollama(log_data)
+    if analyzed_log_data:
+        with open(args.out, "w") as f:
+            f.write(analyzed_log_data)
     print(analyzed_log_data)
 
 if __name__ == "__main__":
