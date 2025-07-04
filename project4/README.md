@@ -19,11 +19,11 @@ Additionally, in order to use logcat-analyzer, you need to have ADB and ollama i
 
 ## Running android-package-analyzer
 
-To run android-package-analyzer, you can use `python -m android_package_analyzer [package_name]`. Along with the required `package_name` argument, android-package-analyzer has the below optional arguments:
+To run logcat-analyzer, you can use `python -m logcat_analyzer`. There are no required arguments, but logcat-analyzer has the below optional arguments:
 
-    -d, --device DEVICE          The serial number of the Android device to be analyzed.
-    -h, --help                   Display the help menu for android-package-analyzer.
-    -o, --outdir OUTPUT          Directory to output results to.
+    -d, --device DEVICE          The serial number of the Android device to pull logs from for analysis
+    -h, --help                   Display the help menu for logcat-analyzer.
+    -o, --out OUTPUT             The file to output results to in JSON format.
 
 ## Future Work
 
@@ -32,3 +32,4 @@ This is an initial version of the tool, which can be further built up. Included 
     * Ensure the tool works with the formatting of ADB results for different versions of Android.
     * Continue adjusting the prompt to improve upon the scoring of the criticality of each log entry.
     * Enable the AI model to be run remotely on a device that is better for running AI models.
+    * Try other AI models with the tool to determine which AI model works the best for this type of analysis of logcat logs.
