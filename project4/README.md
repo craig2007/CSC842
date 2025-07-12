@@ -17,7 +17,7 @@ logcat-analyzer requires Python 3.6+, along with the following libraries:
 
 Additionally, in order to use logcat-analyzer, you need to have ADB and ollama installed on your computer and you need developer mode and debugging enabled on the Android device being analyzed.
 
-## Running android-package-analyzer
+## Running logcat-analyzer
 
 To run logcat-analyzer, you can use `python -m logcat_analyzer`. There are no required arguments, but logcat-analyzer has the below optional arguments:
 
