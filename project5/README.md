@@ -23,3 +23,5 @@ This is an early version of the DNS Hijacker tool that requires further developm
 * Support for DNS requests that have multiple queries or additional info in them
 * Support for IP headers of sizes other than 20
 * Support for additional DNS record types
+* Refactor code to make it more readable
+* Use classes and smart pointers to improve memory safety
