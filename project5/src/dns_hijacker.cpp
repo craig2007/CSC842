@@ -128,6 +128,7 @@ void pcap_callback(u_char *user, const struct pcap_pkthdr* pkthdr, const u_char*
     resp_udp_hdr->src_port = udp_hdr->dest_port;
     resp_udp_hdr->dest_port = udp_hdr->src_port;
     resp_udp_hdr->length = udp_hdr->length + htons(sizeof(DNSRecord));
+    resp_udp_hdr->checksum = 0;
     //resp_udp_hdr->checksum = calculate_udp_checksum();
 
     // Create the DNS header
