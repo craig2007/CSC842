@@ -87,14 +87,6 @@ void pcap_callback(u_char *user, const struct pcap_pkthdr* pkthdr, const u_char*
 	return;
     }
 
-    // Create pointers to the different portions of the response packet
-    struct ether_header *response_ether_hdr = reinterpret_cast<struct ether_header*>(resp_pkt);
-    struct ip *resp_ip_hdr = reinterpret_cast<struct ip*>(resp_pkt + sizeof(struct ether_header));
-    struct UDPHeader *resp_udp_hdr = reinterpret_cast<struct UDPHeader*>(resp_pkt + sizeof(struct ether_header) + (resp_ip_hdr->ip_hl * 4));
-    struct DNSHeader *resp_dns_hdr = reinterpret_cast<struct DNSHeader*>(resp_pkt + sizeof(struct ether_header) + (resp_ip_hdr->ip_hl * 4) + sizeof(struct UDPHeader));
-    uint8_t* resp_dns_question_ptr = reinterpret_cast<uint8_t*>(resp_dns_hdr) + sizeof(struct DNSHeader);
-    uint8_t* resp_dns_answer_ptr = resp_pkt + pkthdr->caplen;
-
     // Create pointers to the different portions of the captured packet
     struct ether_header *eth_hdr = reinterpret_cast<struct ether_header*>(pkt);
     struct ip *ip_hdr = reinterpret_cast<struct ip*>(pkt + sizeof(struct ether_header));
@@ -102,6 +94,15 @@ void pcap_callback(u_char *user, const struct pcap_pkthdr* pkthdr, const u_char*
     struct DNSHeader *dns_hdr = reinterpret_cast<struct DNSHeader*>(pkt + sizeof(struct ether_header) + (ip_hdr->ip_hl * 4) + sizeof(struct UDPHeader));
     uint8_t* dns_question_ptr = reinterpret_cast<uint8_t*>(dns_hdr) + sizeof(struct DNSHeader);
 
+    // Create pointers to the different portions of the response packet
+    struct ether_header *response_ether_hdr = reinterpret_cast<struct ether_header*>(resp_pkt);
+    struct ip *resp_ip_hdr = reinterpret_cast<struct ip*>(resp_pkt + sizeof(struct ether_header));
+    struct UDPHeader *resp_udp_hdr = reinterpret_cast<struct UDPHeader*>(resp_pkt + sizeof(struct ether_header) + (ip_hdr->ip_hl * 4));
+    struct DNSHeader *resp_dns_hdr = reinterpret_cast<struct DNSHeader*>(resp_pkt + sizeof(struct ether_header) + (ip_hdr->ip_hl * 4) + sizeof(struct UDPHeader));
+    uint8_t* resp_dns_question_ptr = reinterpret_cast<uint8_t*>(resp_dns_hdr) + sizeof(struct DNSHeader);
+    uint8_t* resp_dns_answer_ptr = resp_pkt + pkthdr->caplen;
+
+    // TODO: Update tool to handle IP headers with optional arguments and DNS queries with multiple questions or additional arguments
     if (ip_hdr->ip_hl != 5 || dns_hdr->arcount != 0 || dns_hdr->qdcount > htons(1) || dns_hdr->nscount != 0)
     {
         std::cout << "Unexpected header value found";
@@ -117,11 +118,11 @@ void pcap_callback(u_char *user, const struct pcap_pkthdr* pkthdr, const u_char*
 
     // Create the response IP header
     memcpy(resp_ip_hdr, ip_hdr, sizeof(struct ip));
-    resp_ip_hdr->ip_len = ip_hdr->ip_len + sizeof(DNSRecord);
+    resp_ip_hdr->ip_len = ip_hdr->ip_len + htons(sizeof(DNSRecord));
     resp_ip_hdr->ip_ttl = 64;
     resp_ip_hdr->ip_src = ip_hdr->ip_dst;
     resp_ip_hdr->ip_dst = ip_hdr->ip_src;
-    resp_ip_hdr->ip_sum = htons(calculate_ip_checksum(resp_ip_hdr));
+    resp_ip_hdr->ip_sum = calculate_ip_checksum(resp_ip_hdr);
 
     // Create the UDP header
     resp_udp_hdr->src_port = udp_hdr->dest_port;
